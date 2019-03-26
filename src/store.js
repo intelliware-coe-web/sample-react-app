@@ -8,5 +8,5 @@ const store = createStore(rootReducer);
 export default store;
 
 function rootReducer(state = initialState, action) {
-  return action.sideEffect ? action.sideEffect(state, action.payload) : state;
+  return action.sideEffect ? action.sideEffect(state) : state;
 }

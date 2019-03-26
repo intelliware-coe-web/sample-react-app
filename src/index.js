@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import store from './store';
+import {SearchArticleAction} from './article/article-actions';
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
@@ -10,3 +12,6 @@ ReactDOM.render(<App />, document.getElementById('root'));
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+
+window.store = store;
+window.SearchArticleAction = SearchArticleAction;

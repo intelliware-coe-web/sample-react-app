@@ -6,6 +6,12 @@ import * as serviceWorker from './serviceWorker';
 import store from './store';
 import {Provider} from "react-redux";
 
+import '../node_modules/uikit/dist/css/uikit.min.css';
+import '../node_modules/uikit/dist/css/uikit-core.css';
+import '../node_modules/uikit/dist/js/uikit.min.js'
+import '../node_modules/uikit/dist/js/uikit-core.min.js'
+import '../node_modules/uikit/dist/js/uikit-icons.min.js'
+
 ReactDOM.render(
   <Provider store={store}>
     <App />

@@ -1,26 +1,27 @@
 import React from 'react';
 import {connect} from "react-redux";
 import './App.css';
-import Search from "./article/search-component";
 
-import '../node_modules/uikit/dist/css/uikit.min.css';
-import '../node_modules/uikit/dist/css/uikit-core.css';
-import '../node_modules/uikit/dist/js/uikit.min.js'
-import '../node_modules/uikit/dist/js/uikit-core.min.js'
-import '../node_modules/uikit/dist/js/uikit-icons.min.js'
+import Search from "./article/search-component";
+import SearchResults from "./article/search-result-component";
 import {SearchArticles} from "./article/article-actions";
 
-function App({searchArticles}) {
+import {debounce} from 'lodash';
+
+function App({searchResults, searchArticles}) {
   return (
     <div>
-      <Search onSearch={searchArticles}/>
+      <Search onSearch={debounce(searchArticles, 1000)}/>
+      <SearchResults results={searchResults.articles}/>
     </div>
   )
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    searchArticles: search => dispatch(SearchArticles(search))
+    searchArticles(search) {
+      dispatch(SearchArticles(search));
+    }
   }
 }
 

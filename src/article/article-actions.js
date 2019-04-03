@@ -1,8 +1,16 @@
-export function SearchArticleAction(search) {
+import findByKeyword from "./wikipedia-service";
+
+export function SearchArticles(search) {
+  return dispatch =>
+    findByKeyword(search)
+      .then(articles => dispatch(FoundArticlesAction(articles)));
+}
+
+function FoundArticlesAction(searchResults) {
   return {
-    type: 'SEARCH_ARTICLES',
-    sideEffect(state) {
-      return {...state, search};
+    type: 'FOUND_ARTICLES',
+    reducer(state) {
+      return {...state, searchResults};
     }
   }
 }

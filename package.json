@@ -6,6 +6,7 @@
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
     "react-scripts": "2.1.8",
+    "redux-thunk": "^2.3.0",
     "uikit": "^3.0.3"
   },
   "scripts": {

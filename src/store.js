@@ -1,12 +1,14 @@
-import {createStore} from "redux";
+import {applyMiddleware, compose, createStore} from "redux";
+import thunk from "redux-thunk";
 
 const initialState = {
-  articles: []
+  searchResults: {}
 };
 
-const store = createStore(rootReducer);
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(rootReducer, initialState, composeEnhancers(applyMiddleware(thunk)));
 export default store;
 
 function rootReducer(state = initialState, action) {
-  return action.sideEffect ? action.sideEffect(state) : state;
+  return action.reducer ? action.reducer(state) : state;
 }

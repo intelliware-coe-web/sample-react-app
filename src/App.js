@@ -1,28 +1,33 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React from 'react';
+import {connect} from "react-redux";
 import './App.css';
+import Search from "./article/search-component";
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
+import '../node_modules/uikit/dist/css/uikit.min.css';
+import '../node_modules/uikit/dist/css/uikit-core.css';
+import '../node_modules/uikit/dist/js/uikit.min.js'
+import '../node_modules/uikit/dist/js/uikit-core.min.js'
+import '../node_modules/uikit/dist/js/uikit-icons.min.js'
+import {SearchArticles} from "./article/article-actions";
+
+function App({searchArticles}) {
+  return (
+    <div>
+      <Search onSearch={searchArticles}/>
+    </div>
+  )
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    searchArticles: search => dispatch(SearchArticles(search))
   }
 }
 
-export default App;
+function mapStateToProps(state) {
+  return {
+    searchResults: state.searchResults
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)

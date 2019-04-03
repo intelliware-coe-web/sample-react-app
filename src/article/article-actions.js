@@ -3,14 +3,14 @@ import findByKeyword from "./wikipedia-service";
 export function SearchArticles(search) {
   return dispatch =>
     findByKeyword(search)
-      .then(articles => dispatch(FoundArticlesAction(articles)));
+      .then(articles => dispatch(FoundArticlesAction(search, articles)));
 }
 
-function FoundArticlesAction(searchResults) {
+function FoundArticlesAction(search, searchResults) {
   return {
     type: 'FOUND_ARTICLES',
     reducer(state) {
-      return {...state, searchResults};
+      return {...state, search, searchResults};
     }
   }
 }

@@ -7,12 +7,14 @@ import SearchResults from "./article/search-result-component";
 import {SearchArticles} from "./article/article-actions";
 
 import {debounce} from 'lodash';
+import LoadMore from "./article/load-more-component";
 
-function App({searchResults, searchArticles}) {
+function App({search, searchResults, searchArticles}) {
   return (
-    <div>
+    <div className='uk-padding'>
       <Search onSearch={debounce(searchArticles, 1000)}/>
       <SearchResults results={searchResults.articles}/>
+      <LoadMore title={searchResults.summary} onLoadMore={() => searchArticles(search)}/>
     </div>
   )
 }
@@ -27,6 +29,7 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
   return {
+    search: state.search,
     searchResults: state.searchResults
   }
 }

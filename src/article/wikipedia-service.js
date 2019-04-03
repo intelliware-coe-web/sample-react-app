@@ -1,5 +1,38 @@
-export default async function findByKeyword(topic) {
-  const response = await fetch(`https://en.wikipedia.org/w/api.php?${getSearchParams(topic).toString()}`);
+const fullTextSearch = find();
+fullTextSearch.next();
+
+export default function findByKeyword(topic) {
+  return search(fullTextSearch, topic);
+}
+
+async function search(finder, topic) {
+  const next = await finder.next(topic);
+  return next.value;
+}
+
+async function* find() {
+  let current = { topic: '' };
+  let previous = { topic: '' , results: {}};
+  while(true) {
+    current.topic = yield current.results;
+
+    if (current.topic) {
+      if (current.topic !== previous.topic) {
+        delete previous.offset;
+        previous.results.articles = [];
+      }
+
+      current.results = await queryWikipedia(current.topic, previous.results.continue);
+      current.results.articles = previous.results.articles.concat(current.results.articles);
+
+      previous = { ...current };
+    }
+  }
+}
+
+async function queryWikipedia(topic, offset) {
+  const searchParams = getSearchParams(topic, offset).toString();
+  const response = await fetch(`https://en.wikipedia.org/w/api.php?${searchParams}`);
   const results = await response.json();
   return adaptSearchResults(results);
 }
@@ -8,17 +41,16 @@ function adaptSearchResults(searchResult) {
   const summary = getSummary(searchResult);
   const articles = Object.values(searchResult.query.pages)
     .map(({title, extract, fullurl, thumbnail = {}}) => ({title, thumbnail, description: extract, href: fullurl}));
-  return {summary, articles};
+  return { summary, articles, continue: searchResult.continue};
 }
 
 function getSummary(searchResult) {
-  const page = searchResult.continue ? searchResult.continue.sroffset :
-    searchResult.query.searchinfo.totalhits;
+  const page = searchResult.continue ? searchResult.continue.sroffset : searchResult.query.searchinfo.totalhits;
   const total = searchResult.query.searchinfo.totalhits;
   return `${page} of ${total}`
 }
 
-function getSearchParams(topic) {
+function getSearchParams(topic, offset) {
   const searchParams = new URLSearchParams();
   searchParams.append('action', 'query');
   searchParams.append('generator', 'search');
@@ -35,5 +67,9 @@ function getSearchParams(topic) {
   searchParams.append('redirects', '1');
   searchParams.append('format', 'json');
   searchParams.append('origin', '*');
+  if (offset) {
+    searchParams.append('sroffset', offset.sroffset);
+    searchParams.append('gsroffset', offset.gsroffset);
+  }
   return searchParams;
 }

@@ -1,9 +1,29 @@
-import {FoundArticlesAction} from "./article-actions";
+import {SearchArticles} from "./article-actions";
 
-test('it should add the search value to the store state', () => {
-  const articles = {};
-  const action = FoundArticlesAction(articles);
-  const oldState = {};
-  const newState = action.reducer(oldState);
-  expect(newState.articles).toBe(articles);
+jest.mock('./wikipedia-service',
+  () => jest.fn().mockReturnValue(Promise.resolve({})));
+
+describe('SearchArticles Thunk', () => {
+  let actual;
+
+  beforeEach(() => {
+    const mockDispatch = jest.fn((action) => action);
+    const thunk = SearchArticles('foo');
+    actual = thunk(mockDispatch);
+  });
+
+  it('should dispatch a "FOUND_ARTICLES" event', (done) => {
+    actual.then(action => {
+      expect(action.type).toBe('FOUND_ARTICLES');
+      done();
+    });
+  });
+
+  it('should dispatch a reducer ', (done) => {
+    actual.then(action => {
+      expect(action.reducer({})).toEqual({search: 'foo', searchResults:{}});
+      done();
+    });
+  });
 });
+

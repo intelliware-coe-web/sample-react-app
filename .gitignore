@@ -85,3 +85,4 @@ yarn-error.log*
 
 *.iml
 /.idea
+__snapshots__/

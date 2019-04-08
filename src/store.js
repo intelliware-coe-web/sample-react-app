@@ -1,20 +1,16 @@
 import {applyMiddleware, compose, createStore} from "redux";
-import {isFunction} from 'lodash';
-import createSagaMiddleware from 'redux-saga';
-import {searchSaga} from "./article/article-actions";
+import promise from 'redux-promise';
 
 const initialState = {
   searchResults: {
     articles: []
   }
 };
-const sagaMiddleware = createSagaMiddleware();
+
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(rootReducer, initialState, composeEnhancers(applyMiddleware(sagaMiddleware)));
+const store = createStore(rootReducer, initialState, composeEnhancers(applyMiddleware(promise)));
 export default store;
 
-sagaMiddleware.run(searchSaga);
-
 function rootReducer(state = initialState, action) {
-  return isFunction(action.payload) ? action.payload(state) : state;
+  return action.reducer ? action.reducer(state) : state;
 }

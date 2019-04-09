@@ -1,19 +1,21 @@
 import {applyMiddleware, compose, createStore} from "redux";
 import {isFunction} from 'lodash';
-import createSagaMiddleware from 'redux-saga';
-import {searchSaga} from "./article/article-actions";
+import {searchEpic} from "./article/article-actions";
+import {combineEpics, createEpicMiddleware} from "redux-observable";
 
 const initialState = {
   searchResults: {
     articles: []
   }
 };
-const sagaMiddleware = createSagaMiddleware();
+const epicMiddleware = createEpicMiddleware();
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(rootReducer, initialState, composeEnhancers(applyMiddleware(sagaMiddleware)));
+const store = createStore(rootReducer, initialState, composeEnhancers(applyMiddleware(epicMiddleware)));
 export default store;
 
-sagaMiddleware.run(searchSaga);
+epicMiddleware.run(combineEpics(
+  searchEpic
+));
 
 function rootReducer(state = initialState, action) {
   return isFunction(action.payload) ? action.payload(state) : state;

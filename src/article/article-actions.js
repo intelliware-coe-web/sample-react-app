@@ -1,13 +1,11 @@
 import findByKeyword from "./wikipedia-service";
-import {put, call, takeLatest} from 'redux-saga/effects';
+import {catchError, map, switchMap} from "rxjs/operators";
+import {of} from 'rxjs'
+import {ofType} from "redux-observable";
+import {fromPromise} from "rxjs/internal-compatibility";
 
-function* searchArticles({payload: search}) {
-  try {
-    const articles = yield call(findByKeyword, search);
-    yield put(SearchSuccessAction(search, articles));
-  } catch (e) {
-    yield put(SearchFailureAction(search, e.message));
-  }
+function searchArticles({payload: search}) {
+  return findByKeyword(search)
 }
 
 function SearchSuccessAction(search, searchResults) {
@@ -18,7 +16,6 @@ function SearchSuccessAction(search, searchResults) {
     }
   }
 }
-
 function SearchFailureAction(search, error) {
   return {
     type: 'SEARCH_ERROR',
@@ -29,6 +26,12 @@ function SearchFailureAction(search, error) {
   }
 }
 
-export function* searchSaga() {
-  yield takeLatest('SEARCH_REQUESTED', searchArticles);
-}
+export const searchEpic = action$ => action$.pipe(
+  ofType('SEARCH_REQUESTED'),
+  switchMap(action =>
+    fromPromise(searchArticles(action)).pipe(
+        map(results => SearchSuccessAction(action.payload, results)),
+        catchError(error => of(SearchFailureAction(action.payload, error)))
+      )
+  ),
+);

@@ -5,7 +5,10 @@ import {ofType} from "redux-observable";
 import {fromPromise} from "rxjs/internal-compatibility";
 
 function searchArticles({payload: search}) {
-  return findByKeyword(search)
+  return fromPromise(findByKeyword(search)).pipe(
+    map(results => SearchSuccessAction(search, results)),
+    catchError(error => of(SearchFailureAction(search, error)))
+  )
 }
 
 function SearchSuccessAction(search, searchResults) {
@@ -28,10 +31,5 @@ function SearchFailureAction(search, error) {
 
 export const searchEpic = action$ => action$.pipe(
   ofType('SEARCH_REQUESTED'),
-  switchMap(action =>
-    fromPromise(searchArticles(action)).pipe(
-        map(results => SearchSuccessAction(action.payload, results)),
-        catchError(error => of(SearchFailureAction(action.payload, error)))
-      )
-  ),
+  switchMap(searchArticles),
 );

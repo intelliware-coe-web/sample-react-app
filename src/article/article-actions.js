@@ -1,11 +1,13 @@
 import findByKeyword from "./wikipedia-service";
+import {put, call, takeLatest} from 'redux-saga/effects';
 
-export function SearchArticles(search) {
-  return findByKeyword(search)
-      .then(
-        articles => SearchSuccessAction(search, articles),
-        error => SearchFailureAction(search, error)
-      )
+function* searchArticles({payload: search}) {
+  try {
+    const articles = yield call(findByKeyword, search);
+    yield put(SearchSuccessAction(search, articles));
+  } catch (e) {
+    yield put(SearchFailureAction(search, e.message));
+  }
 }
 
 function SearchSuccessAction(search, searchResults) {
@@ -25,4 +27,8 @@ function SearchFailureAction(search, error) {
     },
     error: true
   }
+}
+
+export function* searchSaga() {
+  yield takeLatest('SEARCH_REQUESTED', searchArticles);
 }

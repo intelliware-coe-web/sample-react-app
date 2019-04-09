@@ -4,8 +4,6 @@ import './App.css';
 
 import Search from "./article/search-component";
 import SearchResults from "./article/search-result-component";
-import {SearchArticles} from "./article/article-actions";
-
 import {debounce} from 'lodash';
 import LoadMore from "./article/load-more-component";
 
@@ -22,7 +20,7 @@ function App({search, searchResults, searchArticles}) {
 function mapDispatchToProps(dispatch) {
   return {
     searchArticles(search) {
-      dispatch(SearchArticles(search));
+      dispatch({type: 'SEARCH_REQUESTED', payload: search});
     }
   }
 }

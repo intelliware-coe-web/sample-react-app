@@ -3,14 +3,28 @@ import findByKeyword from "./wikipedia-service";
 export function SearchArticles(search) {
   return dispatch =>
     findByKeyword(search)
-      .then(articles => dispatch(FoundArticlesAction(search, articles)));
+      .then(
+        articles => SearchSuccessAction(search, articles),
+        error => SearchFailureAction(search, error)
+      )
+      .then(dispatch);
 }
 
-function FoundArticlesAction(search, searchResults) {
+function SearchSuccessAction(search, searchResults) {
   return {
-    type: 'FOUND_ARTICLES',
-    reducer(state) {
+    type: 'SEARCH_SUCCESS',
+    payload (state) {
       return {...state, search, searchResults};
     }
+  }
+}
+
+function SearchFailureAction(search, error) {
+  return {
+    type: 'SEARCH_ERROR',
+    payload (state) {
+      return {...state, search, error}
+    },
+    error: true
   }
 }

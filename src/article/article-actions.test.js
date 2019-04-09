@@ -12,16 +12,16 @@ describe('SearchArticles Thunk', () => {
     actual = thunk(mockDispatch);
   });
 
-  it('should dispatch a "FOUND_ARTICLES" event', (done) => {
+  it('should dispatch a "SEARCH_SUCCESS" event', (done) => {
     actual.then(action => {
-      expect(action.type).toBe('FOUND_ARTICLES');
+      expect(action.type).toBe('SEARCH_SUCCESS');
       done();
     });
   });
 
   it('should dispatch a reducer ', (done) => {
     actual.then(action => {
-      expect(action.reducer({})).toEqual({search: 'foo', searchResults:{}});
+      expect(action.payload({})).toEqual({search: 'foo', searchResults:{}});
       done();
     });
   });

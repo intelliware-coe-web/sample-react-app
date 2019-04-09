@@ -1,4 +1,5 @@
 import {applyMiddleware, compose, createStore} from "redux";
+import {isFunction} from 'lodash';
 import thunk from "redux-thunk";
 
 const initialState = {
@@ -12,5 +13,5 @@ const store = createStore(rootReducer, initialState, composeEnhancers(applyMiddl
 export default store;
 
 function rootReducer(state = initialState, action) {
-  return action.reducer ? action.reducer(state) : state;
+  return isFunction(action.payload) ? action.payload(state) : state;
 }

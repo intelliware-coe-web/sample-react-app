@@ -2,23 +2,27 @@ import findByKeyword from "./wikipedia-service";
 
 export function SearchArticles(search) {
   return findByKeyword(search)
-      .then(articles => FoundArticlesAction(search, articles), ErrorAction)
+      .then(
+        articles => SearchSuccessAction(search, articles),
+        error => SearchFailureAction(search, error)
+      )
 }
 
-function ErrorAction(error) {
+function SearchSuccessAction(search, searchResults) {
   return {
-    type: 'WIKIPEDIA_ERROR',
-    reducer(state) {
-      return {...state, error };
+    type: 'SEARCH_SUCCESS',
+    payload (state) {
+      return {...state, search, searchResults};
     }
   }
 }
 
-function FoundArticlesAction(search, searchResults) {
+function SearchFailureAction(search, error) {
   return {
-    type: 'FOUND_ARTICLES',
-    reducer(state) {
-      return {...state, search, searchResults};
-    }
+    type: 'SEARCH_ERROR',
+    payload (state) {
+      return {...state, search, error}
+    },
+    error: true
   }
 }

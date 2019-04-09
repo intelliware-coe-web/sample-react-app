@@ -1,5 +1,6 @@
 import {applyMiddleware, compose, createStore} from "redux";
 import promise from 'redux-promise';
+import {isFunction} from 'lodash';
 
 const initialState = {
   searchResults: {
@@ -12,5 +13,5 @@ const store = createStore(rootReducer, initialState, composeEnhancers(applyMiddl
 export default store;
 
 function rootReducer(state = initialState, action) {
-  return action.reducer ? action.reducer(state) : state;
+  return isFunction(action.payload) ? action.payload(state) : state;
 }
